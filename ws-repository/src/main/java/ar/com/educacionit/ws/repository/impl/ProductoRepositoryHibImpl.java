@@ -1,21 +1,27 @@
 package ar.com.educacionit.ws.repository.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.query.Query;
 
-import ar.com.educacionit.ws.domain.HibernateUtils;
 import ar.com.educacionit.ws.domain.Producto;
+import ar.com.educacionit.ws.exceptions.DuplicatedException;
+import ar.com.educacionit.ws.exceptions.GenericException;
 import ar.com.educacionit.ws.repository.ProductoRepository;
+import ar.com.educacionit.ws.repository.hibernate.HibernateBaseRepository;
 
-public class ProductoRepositoryHibImpl implements ProductoRepository {
+public class ProductoRepositoryHibImpl extends HibernateBaseRepository implements ProductoRepository {
 
-	public Producto getById(Long id) {
+	public ProductoRepositoryHibImpl() {
+		super();
+	}
+	
+	public Producto getById(Long id) throws GenericException  {
 		
-		SessionFactory factory = HibernateUtils.getSessionFactory();
-
 		Session session = factory.getCurrentSession();
 		
 		Producto producto = null;
@@ -43,13 +49,53 @@ public class ProductoRepositoryHibImpl implements ProductoRepository {
 		
 		} catch(Exception e) {
 			
-			e.printStackTrace();
-			
 			session.getTransaction().rollback();
+			throw new GenericException(e.getCause().getMessage(), e);
 		}
 		
-
 		return producto;
+	}
+
+	public List<Producto> findAll() {
+		
+		List<Producto> productos = new ArrayList<Producto>();
+		
+		Session session  = factory.getCurrentSession();
+		
+		session.beginTransaction();
+		
+		// HQL
+		String sql = "Select p from " + Producto.class.getName() + " p";
+		
+		Query<Producto> query = session.createQuery(sql);
+		
+		productos.addAll(query.getResultList());
+		
+		session.getTransaction().commit();
+		
+		return productos;
+	}
+
+	public Producto insert(Producto productoACrear) throws DuplicatedException, GenericException {
+		
+		Session session = factory.getCurrentSession();
+		
+		session.beginTransaction();
+		
+		try {
+			session.saveOrUpdate(productoACrear);
+		} catch(ConstraintViolationException e) {
+			session.getTransaction().rollback();
+			throw new DuplicatedException(e.getCause().getMessage(), e);
+		} catch(Exception e) {
+			session.getTransaction().rollback();
+			throw new GenericException(e.getMessage(), e);
+		} finally {
+			session.close();
+		}
+		
+		return productoACrear;
+		
 	}
 
 }

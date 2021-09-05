@@ -1,4 +1,4 @@
-package ar.com.educacionit.ws.domain;
+package ar.com.educacionit.ws.repository.hibernate;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
@@ -39,5 +39,6 @@ public class HibernateUtils {
 		// Close caches and connection pools
 		getSessionFactory().close();
 	}
+
 
 }
