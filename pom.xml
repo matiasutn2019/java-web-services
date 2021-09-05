@@ -9,13 +9,15 @@
   <!-- ENCODING PARA TODOS LOS PROYECTOS -->
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.surce>1.8</maven.compiler.surce>
+    <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
   </properties>
   
   <modules>
   	<module>ws-domain</module>
     <module>ws-repository</module>
     <module>ws-services</module>
+    <module>ws-rest-producto-server</module>
   </modules>
 </project>

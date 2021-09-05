@@ -10,6 +10,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "productos")
 public class Producto {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
@@ -23,24 +24,18 @@ public class Producto {
 	
 	@Column(name = "precio", nullable = false)
 	private Float precio;
+	
+	@Column(name = "tipo_producto", nullable = false)
+	private Long tipoProducto;
 
 	public Producto() {
-		super();
 	}
 
-	public Producto(Long id, String titulo, String codigo, Float precio) {
-		super();
-		this.id = id;
+	public Producto(String titulo, String codigo, Float precio, Long tipoProducto) {
 		this.titulo = titulo;
 		this.codigo = codigo;
 		this.precio = precio;
-	}
-
-	public Producto(String titulo, String codigo, Float precio) {
-		super();
-		this.titulo = titulo;
-		this.codigo = codigo;
-		this.precio = precio;
+		this.tipoProducto = tipoProducto;
 	}
 
 	public Long getId() {
@@ -74,10 +69,19 @@ public class Producto {
 	public void setPrecio(Float precio) {
 		this.precio = precio;
 	}
+	
+	public Long getTipoProducto() {
+		return tipoProducto;
+	}
 
+	public void setTipoProducto(Long tipoProducto) {
+		this.tipoProducto = tipoProducto;
+	}
+	
 	@Override
 	public String toString() {
-		return "Producto [id=" + id + ", titulo=" + titulo + ", codigo=" + codigo + ", precio=" + precio + "]";
+		return "Producto [id=" + id + ", titulo=" + titulo + ", codigo=" + codigo + ", precio=" + precio
+				+ ", tipoProducto=" + tipoProducto + "]";
 	}
 		
 }
