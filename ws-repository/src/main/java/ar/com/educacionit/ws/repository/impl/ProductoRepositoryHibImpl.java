@@ -29,20 +29,17 @@ public class ProductoRepositoryHibImpl extends HibernateBaseRepository implement
 		try {		
 			session.getTransaction().begin();
 		
-			String sql = "Select p from " + Producto.class.getName() + " p where p.id = :id";
+			String sql = "Select p from " + Producto.class.getName() + " p where p.id=:id";
 		
 			Query<Producto> query = session.createQuery(sql);
 		
 			query.setParameter("id", id);
-			//query.setParameter("id", new Long(1));
-			//si no se le pasa el valor como obj Long, Java supone q es un Integer y da error de casteo
 		
 			Optional<Producto> employees = query.uniqueResultOptional();
 			
 			if(employees.isPresent()) {
 				producto = employees.get();
 				
-				//System.out.println("Nombre: " + producto.getTitulo().toUpperCase() + ". Precio: " + producto.getPrecio());
 			}
 			
 			session.getTransaction().commit();
@@ -98,4 +95,72 @@ public class ProductoRepositoryHibImpl extends HibernateBaseRepository implement
 		
 	}
 
+	@Override
+	public Producto deleteProducto(Long id) throws GenericException {
+		
+		Producto producto = getById(id);
+		Session session = factory.getCurrentSession();
+		
+		try {			
+			session.beginTransaction();
+			session.remove(producto);
+			session.getTransaction().commit();
+		} catch(Exception e) {
+			session.getTransaction().rollback();
+			throw new GenericException(e.getMessage(), e);
+		} finally {
+			session.close();
+		}
+		return producto;
+	}
+
+	@Override
+	public Producto update(Producto producto) throws GenericException {
+		
+		try {
+			Session session = factory.getCurrentSession();
+			
+			try {
+				session.getTransaction().begin();
+				
+				String sql = "Select e from " + Producto.class.getName() + " e where e.codigo=:codigo";
+				
+				Query<Producto> query = session.createQuery(sql);
+				
+				query.setParameter("codigo", producto.getCodigo());
+				
+				Optional<Producto> productoOpcional = query.uniqueResultOptional();
+				
+				Producto productoBean = null;
+				if(productoOpcional.isPresent()) {
+					productoBean = productoOpcional.get();
+					productoBean.setTitulo(producto.getTitulo());
+					productoBean.setPrecio(producto.getPrecio());
+					productoBean.setTipoProducto(producto.getTipoProducto());
+				}
+				
+				session.saveOrUpdate(productoBean);
+				
+				session.getTransaction().commit();
+			 
+			} catch(ConstraintViolationException e) {
+				
+				session.getTransaction().rollback();
+				
+				throw new DuplicatedException(e.getCause().getMessage(), e);
+			} catch(Exception e) {
+			
+				session.getTransaction().rollback();
+			
+				throw new GenericException(e.getMessage(), e);
+			} finally {
+				
+				session.close();
+			}
+		return producto;
+		
+		} catch(DuplicatedException e) {
+			throw new GenericException(e.getMessage(), e);
+		}
+	}
 }

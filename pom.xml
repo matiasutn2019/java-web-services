@@ -19,5 +19,6 @@
     <module>ws-repository</module>
     <module>ws-services</module>
     <module>ws-rest-producto-server</module>
+    <module>ws-rest-client</module>
   </modules>
 </project>
