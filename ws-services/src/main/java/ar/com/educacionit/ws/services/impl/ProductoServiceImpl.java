@@ -43,4 +43,32 @@ public class ProductoServiceImpl implements ProductoService {
 			throw new ServiceException(e.getMessage());
 		}
 	}
+
+	@Override
+	public Producto eliminarProducto(Long id) throws ServiceException {
+		
+		try {
+			return this.productoRepository.deleteProducto(id);
+		} catch (GenericException e) {
+			throw new ServiceException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public Producto obtenerProducto(Long id) {
+		try {
+			return this.productoRepository.getById(id);
+		} catch (GenericException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public Producto updateProducto(Producto producto) throws ServiceException {
+		try {
+			return this.productoRepository.update(producto);
+		} catch(GenericException e) {
+			throw new ServiceException(e.getMessage(), e);
+		}
+	}
 }

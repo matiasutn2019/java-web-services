@@ -13,4 +13,8 @@ public interface ProductoRepository {
 	public List<Producto> findAll();
 	
 	public Producto insert(Producto productoACrear) throws DuplicatedException, GenericException;
+
+	public Producto deleteProducto(Long id) throws GenericException;
+
+	public Producto update(Producto producto) throws GenericException;
 }
